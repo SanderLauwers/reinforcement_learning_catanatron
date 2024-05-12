@@ -1,0 +1,10 @@
+.vscode
+tensorboard_logs*
+models/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.old
