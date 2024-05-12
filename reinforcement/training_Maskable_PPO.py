@@ -3,6 +3,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 import gymnasium as gym
 import numpy as np
+import time
 
 from catanatron import Color
 from catanatron_experimental.machine_learning.players.minimax import AlphaBetaPlayer
@@ -29,7 +30,7 @@ env = gym.make(
 env = ActionMasker(env, mask_function)  
 
 STEPS = 10_000_000
-NAME = "MaskablePPO__steps="+"{:.0e}".format(STEPS)
+NAME = "MaskablePPO__steps="+"{:.0e}".format(STEPS) + "__{0}".format(int(time.time()))
 print(NAME)
 
 checkpoint_callback = CheckpointCallback(

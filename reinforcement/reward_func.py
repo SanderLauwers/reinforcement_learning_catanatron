@@ -73,4 +73,4 @@ def reward_function(game, p0_color):
 	reward -= 2*len(game.state.buildings_by_color[color_enemy][SETTLEMENT])
 	reward -= 4*len(game.state.buildings_by_color[color_enemy][CITY])
 
-	return reward / 1000
+	return reward / 5000

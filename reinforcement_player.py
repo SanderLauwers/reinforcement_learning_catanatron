@@ -39,7 +39,7 @@ class OwnReinforcement(Player):
 
 		self._mock_env = ActionMasker(self._mock_env, mask_function)
 
-		self._model = MaskableDQN.load("./own/reinforcement/models/checkpoint/MaskableDQN__steps=1e+08__lrate=1.0e-04/MaskableDQN__steps=1e+08__lrate=1.0e-04_2000000_steps.zip", policy="MaskableDQNPolicy", env=self._mock_env)
+		self._model = MaskableDQN.load("./own/reinforcement/models/checkpoint/MaskableDQN__steps=1e+08__lrate=1.0e-04/MaskableDQN__steps=1e+08__lrate=1.0e-04_8000000_steps.zip", policy="MaskableDQNPolicy", env=self._mock_env)
 
 	def decide(self, game: Game, playable_actions: Iterable[Action]):
 		"""Should return one of the playable_actions.

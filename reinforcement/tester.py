@@ -3,10 +3,12 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 import gymnasium as gym
 import numpy as np
+import random
 
 from catanatron import Color
 from catanatron_experimental.machine_learning.players.minimax import AlphaBetaPlayer
 from catanatron.players.weighted_random import WeightedRandomPlayer
+from catanatron import Player
 
 from reward_func import reward_function
 from mask_func import mask_function
@@ -16,6 +18,10 @@ from stable_baselines3 import DQN
 from sb3_contrib import MaskablePPO
 from sb3_contrib.common.wrappers import ActionMasker
 
+class OwnRandomPlayer(Player):
+  def decide(self, game, playable_actions):
+    return playable_actions[random.randint(0, len(playable_actions) - 1)]
+
 env = gym.make(
 	"catanatron_gym:catanatron-v1",
 	config={
@@ -23,7 +29,8 @@ env = gym.make(
 		"map_type": "BASE",
 		"vps_to_win": 10,
 		# "enemies": [AlphaBetaPlayer(Color.RED)], # bot player is blue
-		"enemies": [WeightedRandomPlayer(Color.RED)],
+		# "enemies": [WeightedRandomPlayer(Color.RED)],
+		"enemies": [OwnRandomPlayer(Color.RED)],
 		"reward_function": reward_function,
 		"representation": "vector"
 	},
@@ -37,7 +44,7 @@ env = ActionMasker(env, mask_function)
 # model = DQN("MlpPolicy", env, verbose=1)
 # model.set_parameters("./own/reinforcement/models/dqn_catanatron10000000")
 
-model = MaskableDQN.load("./own/reinforcement/models/MaskableDQN_test", policy="MaskableDQNPolicy", env=env)
+model = MaskableDQN.load("./own/reinforcement/models/checkpoint/MaskableDQN__steps=1e+08__lrate=1.0e-04/MaskableDQN__steps=1e+08__lrate=1.0e-04_4000000_steps.zip", policy="MaskableDQNPolicy", env=env)
 
 won_amount = 0
 lost_amount = 0
