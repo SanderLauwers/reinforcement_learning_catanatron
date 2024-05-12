@@ -31,21 +31,25 @@ def reward_function(game, p0_color):
 		return 1
 	elif winning_color is not None:
 		return -1
-
+	
+	# will be divided by 1000
 	reward = 0
 
 	# + for each possessed resource, but - if too many; - for enemy cards
 	resource_amount = p_state["P"+index_self+"_WOOD_IN_HAND"] + p_state["P"+index_self+"_BRICK_IN_HAND"] + p_state["P"+index_self+"_SHEEP_IN_HAND"] + p_state["P"+index_self+"_WHEAT_IN_HAND"] + p_state["P"+index_self+"_ORE_IN_HAND"]
-	reward += resource_amount
+	reward += 0.5*resource_amount
 	if (resource_amount > 7):
-		reward -= 2*(resource_amount - 7)
+		reward -= 1.5*(resource_amount - 7)
 
 	enemy_resource_amount = p_state["P"+index_enemy+"_WOOD_IN_HAND"] + p_state["P"+index_enemy+"_BRICK_IN_HAND"] + p_state["P"+index_enemy+"_SHEEP_IN_HAND"] + p_state["P"+index_enemy+"_WHEAT_IN_HAND"] + p_state["P"+index_enemy+"_ORE_IN_HAND"]
-	reward -= enemy_resource_amount
+	reward -= 0.5*enemy_resource_amount
 
-	# + for dev cards
+	# + for dev cards (can't know if enemy has victory point or other dev card, so don't count as more)
 	reward += 2*(p_state["P"+index_self+"_KNIGHT_IN_HAND"] + p_state["P"+index_self+"_YEAR_OF_PLENTY_IN_HAND"] + p_state["P"+index_self+"_MONOPOLY_IN_HAND"] + p_state["P"+index_self+"_ROAD_BUILDING_IN_HAND"])
-	reward -= 2*(p_state["P"+index_enemy+"_KNIGHT_IN_HAND"] + p_state["P"+index_enemy+"_YEAR_OF_PLENTY_IN_HAND"] + p_state["P"+index_enemy+"_MONOPOLY_IN_HAND"] + p_state["P"+index_enemy+"_ROAD_BUILDING_IN_HAND"])
+	reward += 7*p_state["P"+index_self+"_VICTORY_POINT_IN_HAND"]
+	reward -= 2*(p_state["P"+index_enemy+"_KNIGHT_IN_HAND"] + p_state["P"+index_enemy+"_YEAR_OF_PLENTY_IN_HAND"] + p_state["P"+index_enemy+"_MONOPOLY_IN_HAND"] + p_state["P"+index_enemy+"_ROAD_BUILDING_IN_HAND"] + p_state["P"+index_enemy+"_VICTORY_POINT_IN_HAND"])
+	
+	# + for played knights
 	reward += 3*p_state["P"+index_self+"_PLAYED_KNIGHT"]
 	reward -= 3*p_state["P"+index_enemy+"_PLAYED_KNIGHT"]
 
@@ -58,7 +62,7 @@ def reward_function(game, p0_color):
 		reward += -4 if robbed_building[0] == color_self else 4
 		
 	# + per vp difference
-	reward += 10 * (p_state["P"+index_self+"_ACTUAL_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])
+	reward += 15 * (p_state["P"+index_self+"_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])
 
 	# +++ per city & ++ per village & + per road; city and village already in vp?
 	reward += len(game.state.buildings_by_color[color_self][ROAD])
@@ -69,4 +73,4 @@ def reward_function(game, p0_color):
 	reward -= 2*len(game.state.buildings_by_color[color_enemy][SETTLEMENT])
 	reward -= 4*len(game.state.buildings_by_color[color_enemy][CITY])
 
-	return reward / 100
+	return reward / 1000

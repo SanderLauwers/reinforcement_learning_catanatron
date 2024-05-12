@@ -1,9 +1,10 @@
 from catanatron import Player, Color
 from catanatron_experimental.cli.cli_players import register_player
-from catanatron.game import Game
+from catanatron.game import Game, Action
 from catanatron.players.weighted_random import WeightedRandomPlayer
 from catanatron_gym.envs.catanatron_env import from_action_space
 from sb3_contrib.common.wrappers import ActionMasker
+from typing import Iterable
 
 import sys
 sys.path.append("./own")
@@ -38,10 +39,9 @@ class OwnReinforcement(Player):
 
 		self._mock_env = ActionMasker(self._mock_env, mask_function)
 
-		self._model = MaskableDQN.load("./own/reinforcement/models/MaskableDQN_test", policy="MaskableDQNPolicy", env=self._mock_env)
+		self._model = MaskableDQN.load("./own/reinforcement/models/checkpoint/MaskableDQN__steps=1e+08__lrate=1.0e-04/MaskableDQN__steps=1e+08__lrate=1.0e-04_2000000_steps.zip", policy="MaskableDQNPolicy", env=self._mock_env)
 
-
-	def decide(self, game: Game, playable_actions):
+	def decide(self, game: Game, playable_actions: Iterable[Action]):
 		"""Should return one of the playable_actions.
 
 		Args:
@@ -50,12 +50,13 @@ class OwnReinforcement(Player):
 		Return:
 				action (Action): Chosen element of playable_actions
 		"""
-		# ===== YOUR CODE HERE =====
-		
-		self._mock_env.reset()
+
+		if len(playable_actions) == 1: return playable_actions[0]
+
+		self._mock_env.unwrapped.players = self._mock_env.unwrapped.game.state.players
 		self._mock_env.unwrapped.game = game
 
 		env_action = self._model.predict(self._mock_env.unwrapped._get_observation(), deterministic=True)
-		return from_action_space(env_action[0], self._mock_env.game.state.playable_actions)
+		return from_action_space(env_action[0], playable_actions)
 	
 		# ===== END YOUR CODE =====

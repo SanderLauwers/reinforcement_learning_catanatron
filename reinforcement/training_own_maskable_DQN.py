@@ -36,7 +36,6 @@ LEARNING_RATE = 0.00025
 NAME = "MaskableDQN__steps="+"{:.0e}".format(STEPS)+"__lrate="+"{:.1e}".format(LEARNING_RATE)
 print(NAME)
 
-
 checkpoint_callback = CheckpointCallback(
   save_freq=2_000_000,
   save_path="./own/reinforcement/models/checkpoint/" + NAME,
@@ -46,7 +45,7 @@ checkpoint_callback = CheckpointCallback(
 # default learning_rate-0.0001, train_freq=4
 # TODO: params learning rate
 # model = DQN(getMaskableDQNPolicy(mask_function, env), env, learning_rate=LEARNING_RATE, exploration_fraction=0.01, verbose=0, tensorboard_log="own/reinforcement/tensorboard_logs", device="cuda")
-model = MaskableDQN("MaskableDQNPolicy", env, learning_rate=LEARNING_RATE, exploration_fraction=0.025, verbose=0, tensorboard_log="own/reinforcement/tensorboard_logs", device="cuda")
+model = MaskableDQN("MaskableDQNPolicy", env, learning_starts=1000, learning_rate=LEARNING_RATE, exploration_fraction=0.025, verbose=0, tensorboard_log="own/reinforcement/tensorboard_logs", device="cuda")
 
 model.learn(total_timesteps=STEPS, tb_log_name=NAME, progress_bar=False, callback=checkpoint_callback)
 

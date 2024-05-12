@@ -1,1 +1,1 @@
-catanatron-play --code=./own/reinforcement_player.py --players=R,OWNREINFORCEMENT --num=10
+catanatron-play --code=./own/reinforcement_player.py --players=W,OWNREINFORCEMENT --num=100

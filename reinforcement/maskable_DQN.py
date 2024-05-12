@@ -17,9 +17,9 @@ from stable_baselines3.common.noise import ActionNoise
 class MaskableQNetwork(QNetwork):
 	def _predict(self, observation: PyTorchObs, action_masks: np.ndarray, deterministic: bool = True) -> torch.Tensor:
 		q_values = self(observation)
-
+		
 		# Get largest Q from masked actions
-		masks_tensor = torch.from_numpy(action_masks < 1).to(device=self.device)#.cuda("cuda:0")
+		masks_tensor = torch.from_numpy(action_masks < 1).to(device=self.device)
 		large = torch.finfo(q_values.dtype).max
 		action = (q_values - large * masks_tensor - large * masks_tensor).argmax(dim=1).reshape(-1)
 

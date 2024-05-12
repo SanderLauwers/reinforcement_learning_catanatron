@@ -18,7 +18,7 @@ env = gym.make(
 		"invalid_action_reward": -69,	
 		"map_type": "BASE",
 		"vps_to_win": 10,
-		"enemies": [AlphaBetaPlayer(Color.RED)], # bot player is blue
+		"enemies": [WeightedRandomPlayer(Color.RED)], # bot player is blue
 		"reward_function": reward_function,
 		"representation": "vector"
 	},
