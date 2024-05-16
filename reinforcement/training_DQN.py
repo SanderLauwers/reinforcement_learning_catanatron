@@ -7,23 +7,21 @@ import time
 from catanatron import Color
 from catanatron_experimental.machine_learning.players.minimax import AlphaBetaPlayer
 from catanatron.players.weighted_random import WeightedRandomPlayer
+from catanatron_gym.envs.catanatron_env import *
 
 from stable_baselines3.common.callbacks import CheckpointCallback 
 from stable_baselines3 import DQN
 
 from reward_func import reward_function
 
-env = gym.make(
-	"catanatron_gym:catanatron-v1",
-	config={
-		"invalid_action_reward": -69,	
-		"map_type": "BASE",
-		"vps_to_win": 10,
-		"enemies": [WeightedRandomPlayer(Color.RED)], # bot player is blue
-		"reward_function": reward_function,
-		"representation": "vector"
-	},
-)
+env = CatanatronEnv({
+	"invalid_action_reward": -69,	
+	"map_type": "BASE",
+	"vps_to_win": 10,
+	"enemies": [WeightedRandomPlayer(Color.RED)], # bot player is blue
+	"reward_function": reward_function,
+	"representation": "vector"
+})
 
 STEPS = 1_000_000
 LEARNING_RATE = 0.0001
