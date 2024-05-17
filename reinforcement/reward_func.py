@@ -58,19 +58,19 @@ def reward_function(game, p0_color):
 		if not node_id in list(board.buildings.keys()):
 			continue
 		robbed_building = board.buildings[node_id]
-		reward += -6 if robbed_building[0] == color_self else 6
+		reward += -10 if robbed_building[0] == color_self else 10
 		
 	# + per vp difference
-	reward += 20 * (p_state["P"+index_self+"_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])
+	reward += 50 * (p_state["P"+index_self+"_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])
 
 	# +++ per city & ++ per village & + per road; city and village already in vp?
-	reward += 7*len(game.state.buildings_by_color[color_self][ROAD])
-	reward += 15*len(game.state.buildings_by_color[color_self][SETTLEMENT])
-	reward += 30*len(game.state.buildings_by_color[color_self][CITY])
+	reward += 8*len(game.state.buildings_by_color[color_self][ROAD])
+	reward += 25*len(game.state.buildings_by_color[color_self][SETTLEMENT])
+	reward += 50*len(game.state.buildings_by_color[color_self][CITY])
 
-	reward -= 7*len(game.state.buildings_by_color[color_enemy][ROAD])
-	reward -= 15*len(game.state.buildings_by_color[color_enemy][SETTLEMENT])
-	reward -= 30*len(game.state.buildings_by_color[color_enemy][CITY])
+	reward -= 8*len(game.state.buildings_by_color[color_enemy][ROAD])
+	reward -= 25*len(game.state.buildings_by_color[color_enemy][SETTLEMENT])
+	reward -= 50*len(game.state.buildings_by_color[color_enemy][CITY])
 
 	return reward / 10000
 
@@ -85,5 +85,5 @@ def VP_only_reward_function(game, p0_color):
 		return 1
 	elif winning_color is not None:
 		return -1
-	# reward point difference
-	return 0.1 (p_state["P"+index_self+"_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])
+	# victory point difference
+	return 0.05 * (p_state["P"+index_self+"_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])

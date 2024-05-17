@@ -33,40 +33,41 @@ from mask_func import mask_function
 # 	},
 # )
 
+BASED = False
+PATH = "own/reinforcement/models/checkpoint/t1715886455__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__rf=vp/t1715886455__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__rf=vp_46000000_steps.zip"
+
+STEPS = 100_000_000
+LEARNING_RATE = 0.001
+EXPL_FRAC = 0.1
+ACT_FN = "tanh"
+W_DECAY = 0.1
+OPTIMIZER = "Adam"
+TRAIN_FREQ = 12
+BATCH_SIZE = 200
+REWARD_FUNCTION = "vp"
+DISCOUNT_FACTOR = 0.99
+HIDDEN_LAYERS = 1
+
+NAME = "t{0}__".format(int(time.time())) + "MaskableDQN__steps="+"{:.0e}".format(STEPS)+"__lr="+"{:.1e}".format(LEARNING_RATE) + "__wd={0}".format(W_DECAY) + "__af=" + ACT_FN + "__opt=" + OPTIMIZER + "__rf=" + REWARD_FUNCTION + "__df=" + str(DISCOUNT_FACTOR) + "__hl=" + str(HIDDEN_LAYERS) + ("__BASED" if BASED else "")
+print(NAME)
+
+act_fn = torch.nn.modules.activation.Tanh if ACT_FN=="tanh" else torch.nn.modules.activation.ReLU if ACT_FN == "relu" else torch.nn.modules.activation.LeakyReLU if ACT_FN == "lkyrelu" else quit()
+opt = torch.optim.Adam if OPTIMIZER == "Adam" else torch.optim.RMSprop if OPTIMIZER == "RMSP" else quit()
+rew_fn = reward_function if REWARD_FUNCTION == "all" else VP_only_reward_function if REWARD_FUNCTION == "vp" else quit()
+net_arch = [64 for _ in range(HIDDEN_LAYERS)]
+
 env = CatanatronEnv({
 	"invalid_action_reward": -69,	
 	"map_type": "BASE",
 	"vps_to_win": 10,
 	"enemies": [WeightedRandomPlayer(Color.RED)], # bot player is blue
-	"reward_function": reward_function,
+	"reward_function": rew_fn,
 	"representation": "vector"
 })
 
 env.observation_space = spaces.Box(low=-1, high=HIGH, shape=(NUM_FEATURES,), dtype=float)
 
 env = ActionMasker(env, mask_function)
-
-BASED = False
-PATH = "own/reinforcement/models/checkpoint/MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__1715719377/MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__1715719377_72000000_steps.zip"
-
-STEPS = 100_000_000
-LEARNING_RATE = 0.0001
-EXPL_FRAC = 0.1
-ACT_FN = "tanh"
-W_DECAY = 0.1
-OPTIMIZER = "Adam"
-TRAIN_FREQ = 12
-BATCH_SIZE = 400
-REWARD_FUNCTION = "all"
-DISCOUNT_FACTOR = 0.99 # doesn't do anything as of now
-
-NAME = "t{0}__".format(int(time.time())) + "MaskableDQN__steps="+"{:.0e}".format(STEPS)+"__lr="+"{:.1e}".format(LEARNING_RATE) + "__wd={0}".format(W_DECAY) + "__af=" + ACT_FN + "__opt=" + OPTIMIZER + "__rf=" + REWARD_FUNCTION + ("__BASED" if BASED else "")
-print(NAME)
-
-act_fn = torch.nn.modules.activation.Tanh if ACT_FN=="tanh" else torch.nn.modules.activation.ReLU if ACT_FN == "relu" else torch.nn.modules.activation.LeakyReLU if ACT_FN == "lkyrelu" else quit()
-opt = torch.optim.Adam if OPTIMIZER == "Adam" else torch.optim.RMSprop if OPTIMIZER == "RMSP" else quit()
-rew_fn = reward_function if REWARD_FUNCTION == "all" else VP_only_reward_function if REWARD_FUNCTION == "vp" else quit()
-
 
 
 checkpoint_callback = CheckpointCallback(
@@ -77,7 +78,8 @@ checkpoint_callback = CheckpointCallback(
 
 # model = DQN(getMaskableDQNPolicy(mask_function, env), env, learning_rate=LEARNING_RATE, exploration_fraction=0.01, verbose=0, tensorboard_log="own/reinforcement/tensorboard_logs", device="cuda")
 # model = MaskableDQN("MaskableDQNPolicy", env, learning_starts=1000, learning_rate=LEARNING_RATE, exploration_fraction=0.1, verbose=0, tensorboard_log="own/reinforcement/tensorboard_logs", device="cuda")
-model = MaskableDQN("MaskableDQNPolicy", env, batch_size=BATCH_SIZE, train_freq=TRAIN_FREQ, learning_starts=1000, learning_rate=LEARNING_RATE, exploration_fraction=EXPL_FRAC, policy_kwargs={"optimizer_class": opt, "activation_fn": act_fn, "optimizer_kwargs": {"weight_decay": W_DECAY}}, verbose=0, tensorboard_log="own/reinforcement/tensorboard_logs", device="cuda")
+model = MaskableDQN("MaskableDQNPolicy", env, batch_size=BATCH_SIZE, train_freq=TRAIN_FREQ, gamma=DISCOUNT_FACTOR, learning_starts=1000, learning_rate=LEARNING_RATE, exploration_fraction=EXPL_FRAC,
+					policy_kwargs={"optimizer_class": opt, "net_arch": net_arch, "activation_fn": act_fn, "optimizer_kwargs": {"weight_decay": W_DECAY}}, verbose=0, tensorboard_log="own/reinforcement/tensorboard_logs", device="cuda")
 # print(model.policy)
 if BASED: model.set_parameters(PATH)
 
