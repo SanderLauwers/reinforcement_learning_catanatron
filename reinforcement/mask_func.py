@@ -9,3 +9,12 @@ def mask_function(env):
 		return np.ones(len(mask))
 	
 	return mask
+
+def direct_mask_function(valid_actions, size):
+	mask = np.zeros(size)
+	try:
+		for v in valid_actions: mask[v] = 1
+	except:
+		return np.ones(len(mask))
+	
+	return mask

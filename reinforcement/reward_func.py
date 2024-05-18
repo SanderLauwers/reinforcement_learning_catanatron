@@ -86,4 +86,4 @@ def VP_only_reward_function(game, p0_color):
 	elif winning_color is not None:
 		return -1
 	# victory point difference
-	return 0.05 * (p_state["P"+index_self+"_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])
+	return 0.01 * (p_state["P"+index_self+"_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])

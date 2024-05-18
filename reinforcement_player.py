@@ -18,7 +18,7 @@ from reinforcement.maskable_DQN import MaskableDQN
 from reinforcement.mask_func import mask_function
 from reinforcement.reward_func import reward_function
 
-PATH = "own/reinforcement/models/checkpoint/t1715889606__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__rf=all__df=0.99__hl=1/t1715889606__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__rf=all__df=0.99__hl=1_54000000_steps.zip"
+PATH = "own/reinforcement/models/checkpoint/t1716032097__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__rf=vp__df=0.99__hl=2__BASED/t1716032097__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__rf=vp__df=0.99__hl=2__BASED_10000000_steps.zip"
 @register_player("OWNREINFORCEMENT")
 class OwnReinforcement(Player):
 	i = 0
@@ -41,8 +41,8 @@ class OwnReinforcement(Player):
 		self._mock_env = ActionMasker(self._mock_env, mask_function)
 
 		self._model = MaskableDQN.load(PATH, policy="MaskableDQNPolicy", env=self._mock_env)
-		print(self._model.policy)
-		print("model_initiated")
+		# print(self._model.policy)
+		# print("model_initiated")
 
 
 	def decide(self, game: Game, playable_actions: Iterable[Action]):
