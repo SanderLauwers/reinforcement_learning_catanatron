@@ -1,6 +1,7 @@
 .vscode
-tensorboard_logs*
-models/
+/reinforcement/tensorboard_logs*
+/reinforcement/models/*
+!/reinforcement/models/current_best/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

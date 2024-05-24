@@ -1,22 +1,19 @@
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
-import gymnasium as gym
-from gymnasium import spaces
 import torch
 import time
+import random
 
 from catanatron import Color
 from catanatron_experimental.machine_learning.players.minimax import AlphaBetaPlayer
 from catanatron.players.weighted_random import WeightedRandomPlayer
 from catanatron_gym.envs.catanatron_env import *
 
-from stable_baselines3 import DQN
-from stable_baselines3.common.logger import configure
 from stable_baselines3.common.callbacks import CheckpointCallback
 from sb3_contrib.common.wrappers import ActionMasker
 
-from maskable_DQN import MaskableDQN, MaskableDQNPolicy
+from maskable_DQN import MaskableDQN
 from reward_func import reward_function, VP_only_reward_function
 from mask_func import mask_function
 
@@ -33,22 +30,27 @@ from mask_func import mask_function
 # 	},
 # )
 
+class OwnRandomPlayer(Player):
+  def decide(self, game, playable_actions):
+    return playable_actions[random.randint(0, len(playable_actions) - 1)]
+
 BASED = False
-PATH = "own/reinforcement/models/checkpoint/t1716016491__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__rf=vp__df=0.99__hl=2/t1716016491__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=Adam__rf=vp__df=0.99__hl=2_12000000_steps.zip"
+PATH = "own/reinforcement/models/checkpoint/t1716122528__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=lkyrelu__opt=RMSP__rf=all__df=0.99__hl=2/t1716122528__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=lkyrelu__opt=RMSP__rf=all__df=0.99__hl=2_100000000_steps.zip"
 
 STEPS = 100_000_000
-LEARNING_RATE = 0.0001 # 0.01 seems too high, between 0.00001 and 0.001 seems to be fine-ish
-EXPL_FRAC = 0.1
+LEARNING_RATE = 0.00001 # 0.01 seems too high, between 0.00001 and 0.001 seems to be fine-ish
+EXPL_FRAC = 0.15
 ACT_FN = "lkyrelu"
-W_DECAY = 0.1
-OPTIMIZER = "RMSP" # TODO: also try with regular SGD?
+W_DECAY = 0.05
+OPTIMIZER = "Adam" # TODO: also try with regular SGD?
 TRAIN_FREQ = 12
 BATCH_SIZE = 32
 REWARD_FUNCTION = "vp"
-DISCOUNT_FACTOR = 0.99
+DISCOUNT_FACTOR = 0.98
 HIDDEN_LAYERS = 2
+ENEMY = "R"
 
-NAME = "t{0}__".format(int(time.time())) + "MaskableDQN__steps="+"{:.0e}".format(STEPS)+"__lr="+"{:.1e}".format(LEARNING_RATE) + "__wd={0}".format(W_DECAY) + "__af=" + ACT_FN + "__opt=" + OPTIMIZER + "__rf=" + REWARD_FUNCTION + "__df=" + str(DISCOUNT_FACTOR) + "__hl=" + str(HIDDEN_LAYERS) + ("__BASED" if BASED else "")
+NAME = "t{0}__".format(int(time.time())) + "MaskableDQN__steps="+"{:.0e}".format(STEPS)+"__lr="+"{:.1e}".format(LEARNING_RATE) + "__wd={0}".format(W_DECAY) + "__af=" + ACT_FN + "__opt=" + OPTIMIZER + "__rf=" + REWARD_FUNCTION + "__df=" + str(DISCOUNT_FACTOR) + "__hl=" + str(HIDDEN_LAYERS) + "__en=" + ENEMY + ("__BASED" if BASED else "")
 print(NAME)
 
 act_fn = torch.nn.modules.activation.Tanh if ACT_FN=="tanh" else torch.nn.modules.activation.ReLU if ACT_FN == "relu" else torch.nn.modules.activation.LeakyReLU if ACT_FN == "lkyrelu" else quit()
@@ -60,7 +62,7 @@ env = CatanatronEnv({
 	"invalid_action_reward": -69,	
 	"map_type": "BASE",
 	"vps_to_win": 10,
-	"enemies": [WeightedRandomPlayer(Color.RED)], # bot player is blue
+	"enemies": [WeightedRandomPlayer(Color.RED) if ENEMY == "WR" else OwnRandomPlayer(Color.RED) if ENEMY == "R" else AlphaBetaPlayer(Color.RED) if ENEMY == "AB" else quit()], # bot player is blue
 	"reward_function": rew_fn,
 	"representation": "vector"
 })

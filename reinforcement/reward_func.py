@@ -39,7 +39,7 @@ def reward_function(game, p0_color):
 	resource_amount = p_state["P"+index_self+"_WOOD_IN_HAND"] + p_state["P"+index_self+"_BRICK_IN_HAND"] + p_state["P"+index_self+"_SHEEP_IN_HAND"] + p_state["P"+index_self+"_WHEAT_IN_HAND"] + p_state["P"+index_self+"_ORE_IN_HAND"]
 	# reward += 0.5*resource_amount
 	if (resource_amount > 7):
-		reward -= 1.5*(resource_amount - 7)
+		reward -= 2*(resource_amount - 7)
 
 	# enemy_resource_amount = p_state["P"+index_enemy+"_WOOD_IN_HAND"] + p_state["P"+index_enemy+"_BRICK_IN_HAND"] + p_state["P"+index_enemy+"_SHEEP_IN_HAND"] + p_state["P"+index_enemy+"_WHEAT_IN_HAND"] + p_state["P"+index_enemy+"_ORE_IN_HAND"]
 	# reward -= 0.5*enemy_resource_amount
@@ -47,7 +47,7 @@ def reward_function(game, p0_color):
 	# + for dev cards and more for played dev cards (to disencourage hoarding)
 	reward += (2*(p_state["P"+index_self+"_KNIGHT_IN_HAND"] + p_state["P"+index_self+"_YEAR_OF_PLENTY_IN_HAND"] + p_state["P"+index_self+"_MONOPOLY_IN_HAND"] + p_state["P"+index_self+"_ROAD_BUILDING_IN_HAND"])
 				+ 4*p_state["P"+index_self+"_PLAYED_KNIGHT"] + 3*(p_state["P"+index_self+"_PLAYED_YEAR_OF_PLENTY"] + p_state["P"+index_self+"_PLAYED_MONOPOLY"] + p_state["P"+index_self+"_PLAYED_ROAD_BUILDING"])
-				+ 5*p_state["P"+index_self+"_VICTORY_POINT_IN_HAND"] + 8*p_state["P"+index_self+"_PLAYED_VICTORY_POINT"])
+				+ 2*p_state["P"+index_self+"_VICTORY_POINT_IN_HAND"] + 8*p_state["P"+index_self+"_PLAYED_VICTORY_POINT"])
 	reward -= (2*(p_state["P"+index_enemy+"_KNIGHT_IN_HAND"] + p_state["P"+index_enemy+"_YEAR_OF_PLENTY_IN_HAND"] + p_state["P"+index_enemy+"_MONOPOLY_IN_HAND"] + p_state["P"+index_enemy+"_ROAD_BUILDING_IN_HAND"])
 				+ 4*p_state["P"+index_enemy+"_PLAYED_KNIGHT"] + 3*(p_state["P"+index_enemy+"_PLAYED_YEAR_OF_PLENTY"] + p_state["P"+index_enemy+"_PLAYED_MONOPOLY"] + p_state["P"+index_enemy+"_PLAYED_ROAD_BUILDING"])
 				+ 2*p_state["P"+index_enemy+"_VICTORY_POINT_IN_HAND"] + 8*p_state["P"+index_enemy+"_PLAYED_VICTORY_POINT"]) # bot doesn't know whether enemy's unplayed card is a victory point
@@ -64,13 +64,13 @@ def reward_function(game, p0_color):
 	reward += 50 * (p_state["P"+index_self+"_VICTORY_POINTS"] - p_state["P"+index_enemy+"_VICTORY_POINTS"])
 
 	# +++ per city & ++ per village & + per road; city and village already in vp?
-	reward += 8*len(game.state.buildings_by_color[color_self][ROAD])
-	reward += 25*len(game.state.buildings_by_color[color_self][SETTLEMENT])
-	reward += 50*len(game.state.buildings_by_color[color_self][CITY])
+	reward += 10*len(game.state.buildings_by_color[color_self][ROAD])
+	reward += 50*len(game.state.buildings_by_color[color_self][SETTLEMENT])
+	reward += 150*len(game.state.buildings_by_color[color_self][CITY])
 
-	reward -= 8*len(game.state.buildings_by_color[color_enemy][ROAD])
-	reward -= 25*len(game.state.buildings_by_color[color_enemy][SETTLEMENT])
-	reward -= 50*len(game.state.buildings_by_color[color_enemy][CITY])
+	reward -= 10*len(game.state.buildings_by_color[color_enemy][ROAD])
+	reward -= 50*len(game.state.buildings_by_color[color_enemy][SETTLEMENT])
+	reward -= 150*len(game.state.buildings_by_color[color_enemy][CITY])
 
 	return reward / 10000
 

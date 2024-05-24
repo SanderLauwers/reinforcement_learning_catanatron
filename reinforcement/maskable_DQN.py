@@ -123,8 +123,6 @@ class MaskableDQN(DQN):
 	device: Union[torch.device, str] = "auto",
 	_init_setup_model: bool = True,
 ) -> None:
-		# FIXME: stupid workaround; why doesn't self.env work?
-		self.___env = env
 		if (policy == "MaskableDQNPolicy"):
 			policy = MaskableDQNPolicy
 		super().__init__(policy,
