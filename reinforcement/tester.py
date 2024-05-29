@@ -19,7 +19,7 @@ from stable_baselines3 import DQN
 from sb3_contrib import MaskablePPO
 from sb3_contrib.common.wrappers import ActionMasker
 
-PATH = "own/reinforcement/models/checkpoint/MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0__af=tanh__opt=Adam__1715719440/MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0__af=tanh__opt=Adam__1715719440_4000000_steps.zip"
+PATH = "./own/reinforcement/models/current_best/t1716836761__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.05__af=lkyrelu__opt=Adam__rf=vp__df=0.99__hl=3__ls=96__en=WR.zip"
 
 class OwnRandomPlayer(Player):
   def decide(self, game, playable_actions):
@@ -29,7 +29,7 @@ env = CatanatronEnv({
 	"invalid_action_reward": -69,	
 	"map_type": "BASE",
 	"vps_to_win": 10,
-	"enemies": [WeightedRandomPlayer(Color.RED)], # bot player is blue
+	"enemies": [OwnRandomPlayer(Color.RED)], # bot player is blue
 	"reward_function": reward_function,
 	"representation": "vector"
 })

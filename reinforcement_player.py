@@ -15,7 +15,7 @@ from reinforcement.maskable_DQN import MaskableDQN
 from reinforcement.mask_func import mask_function
 from reinforcement.reward_func import reward_function
 
-PATH = "own/reinforcement/models/checkpoint/t1716405900__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=RMSP__rf=vp__df=0.99__hl=2__en=R/t1716405900__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.1__af=tanh__opt=RMSP__rf=vp__df=0.99__hl=2__en=R_100000000_steps.zip"
+PATH = "own/reinforcement/models/finished/t1716836761__MaskableDQN__steps=1e+08__lr=1.0e-04__wd=0.05__af=lkyrelu__opt=Adam__rf=vp__df=0.99__hl=3__ls=96__en=WR.zip"
 @register_player("OWNREINFORCEMENT")
 class OwnReinforcement(Player):
 	i = 0
